@@ -4,6 +4,7 @@
 #include <linux/uaccess.h>
 
 #define MAX_CLIP (5)
+#define INIT_VALUE (-1)
 
 spinlock_t Lock;
 
@@ -69,6 +70,9 @@ long do_sys_kb_dequeue(int *user_buf)
 		return -2;
 	}
 
+	// 붙여넣기가 끝난 값을 초기화
+	Ring[CurrentIndex] = INIT_VALUE;
+
 	// CurrentIndex를 다음 칸으로 이동시키고 Count를 감소
 	Count--;
 	CurrentIndex = (CurrentIndex + 1) % MAX_CLIP;
@@ -81,9 +85,20 @@ long do_sys_kb_dequeue(int *user_buf)
 // 링 버퍼를 초기화
 long do_sys_kb_init(void)
 {
+	int index;
+
 	spin_lock_init(&Lock);
+	spin_lock(&Lock);
+
+	// 링 버퍼의 값을 초기값으로 설정
+	for (index = 0; index < MAX_CLIP; index++)
+	{
+		Ring[index] = INIT_VALUE;
+	}
 	Count = 0;
 	CurrentIndex = 0;
+
+	spin_unlock(&Lock);
 
 	return 0;
 }
