@@ -18,6 +18,13 @@ int main()
 		return -1;
 	}
 
+	// 버퍼에서 실제로 저장되지 않은 값을 받았는지 검사
+	if (clipBoardValue < 0)
+	{
+		printf("Paste failed, Invalid value received, value: '%d'\n", clipBoardValue);
+		return -1;
+	}
+
 	printf("Paste success, value: '%d'\n", clipBoardValue);
 
 	return 0;
