@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char* argv[])
+int main()
 {
 	// 클립보드에 복사 할 값
 	int value = 0;
