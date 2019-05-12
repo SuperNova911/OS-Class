@@ -11,8 +11,13 @@ int main()
 	// 예상되는 클립보드의 값
 	int expectValue = 0;
 
+	// kboard_paste() 함수를 호출한 횟수
+	int iteration = 0;
+
 	while (1)
 	{
+		iteration++;
+
 		// 클립보드가 비어있으면 아무일도 하지 않음
 		if (kboard_paste(&clipBoardValue) != 0)
 		{
@@ -22,7 +27,7 @@ int main()
 		// 클립보드로 부터 받은 값이 예상되는 값과 다를 경우 동기화 문제 발생
 		if (clipBoardValue != expectValue)
 		{
-			printf("Validation fault, clipBoard: '%d', expect: '%d'\n", clipBoardValue, expectValue);
+			printf("Validation fault, clipBoard: '%d', expect: '%d', iteration: '%d'\n", clipBoardValue, expectValue, iteration);
 			break;
 		}
 
