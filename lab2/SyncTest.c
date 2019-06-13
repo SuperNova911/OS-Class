@@ -24,15 +24,18 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	// 명령행 인자들의 값으로 Writer 쓰레드 수, Reader 쓰레드 수, 수행 시간을 설정
 	writerEnqueueNumber = atoi(argv[1]) / 2;
 	writerDequeueNumber = atoi(argv[1]) - (atoi(argv[1]) / 2);
 	readerNumber = atoi(argv[2]);
 	duration = atoi(argv[3]);
 
+	// Writer, Reader의 쓰레드를 담을 배열의 공간 할당
 	writerEnqueueThread = (pthread_t *)malloc(sizeof(pthread_t) * writerEnqueueNumber);
 	writerDequeueThread = (pthread_t *)malloc(sizeof(pthread_t) * writerDequeueNumber);
 	readerThread = (pthread_t *)malloc(sizeof(pthread_t) * readerNumber);
 
+	// Writer, Reader 쓰레드 생성
 	for (index = 0; index < writerEnqueueNumber; index++)
 	{
 		writerEnqueueThread[index] =
@@ -50,6 +53,7 @@ int main(int argc, char *argv[])
 		readerThread[index] = pthread_create(&readerThread[index], NULL, Reader, NULL);
 	}
 
+	// Writer, Reader 쓰레드 실행
 	for (index = 0; index < writerEnqueueNumber; index++)
 	{
 		pthread_join(writerEnqueueThread[index], (void**)&result);
@@ -65,11 +69,17 @@ int main(int argc, char *argv[])
 		pthread_join(readerThread[index], (void**)&result);
 	}
 
+	// 목표 수행 시간동안 대기
 	usleep(duration * 1000 * 1000);
+
+	free(writerEnqueueThread);
+	free(writerDequeueThread);
+	free(readerThread);
 
 	return 0;
 }
 
+// Writer Proc FS의 write() 수행: Kboard Enqueue 작업
 void *WriterEnqueue(void *unused)
 {
 	while (true)
@@ -78,6 +88,7 @@ void *WriterEnqueue(void *unused)
 	}
 }
 
+// Writer Proc FS의 read() 수행: Kboard Dequeue 작업
 void *WriterDequeue(void *unused)
 {
 	while (true)
@@ -86,6 +97,7 @@ void *WriterDequeue(void *unused)
 	}
 }
 
+// Reader Proc FS의 read() 수행: Kboard의 Queue에 있는 무작위 값 출력
 void *Reader(void *unused)
 {
 	while (true)
